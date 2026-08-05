@@ -109,12 +109,10 @@ function TopBars() {
       <div className="border-b" style={{ background: BG_WHITE, borderColor: LINE }}>
         <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Menu size={20} color={NAVY} />
             <Logo size={34} />
             <span className="font-bold text-base leading-tight tracking-tight" style={{ color: NAVY }}>Sona Speech &amp; Hearing Spot</span>
           </div>
           <div className="flex items-center gap-4">
-            <Search size={18} color={NAVY} />
             <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: WHATSAPP }}>
               <MessageCircle size={16} color="white" />
             </a>
@@ -124,12 +122,11 @@ function TopBars() {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between px-5 py-2.5 border-b" style={{ background: BG_SOFT2, borderColor: LINE }}>
+      <div className="flex items-center px-5 py-2.5 border-b" style={{ background: BG_SOFT2, borderColor: LINE }}>
         <div className="flex items-center gap-2 text-sm font-medium" style={{ color: NAVY }}>
           <MapPin size={15} color={TEAL} />
-          Lucknow
+          Lucknow, Uttar Pradesh
         </div>
-        <ChevronDown size={16} color={TEXT_GRAY} />
       </div>
     </div>
   );
@@ -143,7 +140,6 @@ function BottomNav({ view, setView }) {
     { key: "home", label: "Home", icon: Home },
     { key: "book", label: "Book", icon: Calendar, primary: true },
     { key: "status", label: "My Visit", icon: PhoneCall },
-    { key: "admin", label: "Admin", icon: Building2 },
   ];
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 border-t" style={{ background: BG_WHITE, borderColor: LINE, boxShadow: "0 -2px 8px rgba(0,0,0,0.04)" }}>
@@ -604,6 +600,18 @@ function Admin() {
 ---------------------------------------------------------- */
 export default function App() {
   const [view, setView] = useState("home");
+
+  useEffect(() => {
+    // Admin is reached only via a secret web address, never a public button.
+    // Visiting sonaspeechhearingspot.in/#sona-staff opens it.
+    const checkHash = () => {
+      if (window.location.hash === "#sona-staff") setView("admin");
+    };
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+    return () => window.removeEventListener("hashchange", checkHash);
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ background: BG_WHITE, fontFamily: "system-ui, -apple-system, sans-serif" }}>
       <TopBars />
