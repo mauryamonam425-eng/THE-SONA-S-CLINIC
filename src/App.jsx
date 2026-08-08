@@ -21,6 +21,9 @@ const LINE = "#DCE7E6";
 const RED = "#C1443A";
 const WHATSAPP = "#25D366";
 const WHATSAPP_LINK = "https://wa.me/917521949604?text=Hi%2C%20I%27d%20like%20to%20book%20an%20appointment%20at%20Sona%20Speech%20%26%20Hearing%20Spot";
+const UPI_ID = "7521949604@ptaxis";
+const UPI_NAME = "Sonam Maurya";
+const UPI_LINK = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
 
 const SUPABASE_URL = "https://mmqvqudjmquuobryobxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_a0av8ALjS2ZctdGfdWsxcQ_Psk8fMny";
@@ -106,13 +109,13 @@ function Logo({ size = 36 }) {
 function TopBars() {
   return (
     <div className="sticky top-0 z-30">
-      <div className="border-b" style={{ background: BG_WHITE, borderColor: LINE }}>
-        <div className="max-w-3xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo size={34} />
-            <span className="font-bold text-base leading-tight tracking-tight" style={{ color: NAVY }}>Sona Speech &amp; Hearing Spot</span>
+      <div style={{ background: NAVY }}>
+        <div className="max-w-3xl mx-auto px-5 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2 rounded-full pl-2 pr-4 py-1.5" style={{ background: BG_WHITE }}>
+            <Logo size={30} />
+            <span className="font-bold text-[13px] leading-tight tracking-tight" style={{ color: NAVY }}>Sona Speech &amp; Hearing Spot</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: WHATSAPP }}>
               <MessageCircle size={16} color="white" />
             </a>
@@ -172,6 +175,55 @@ function BottomNav({ view, setView }) {
 /* ---------------------------------------------------------
    HOME
 ---------------------------------------------------------- */
+/* ---------------------------------------------------------
+   Rotating hero headline carousel — auto-advances, with
+   manual arrows, echoing the reference site's hero pattern.
+---------------------------------------------------------- */
+const HERO_HEADLINES = [
+  "Every voice deserves to be understood.",
+  "Real progress, tracked every step of the way.",
+  "Expert speech & hearing care for every age.",
+];
+
+function HeroHeadlineCarousel() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex(i => (i + 1) % HERO_HEADLINES.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const go = (dir) => setIndex(i => (i + dir + HERO_HEADLINES.length) % HERO_HEADLINES.length);
+
+  return (
+    <div className="mb-5 max-w-md">
+      <h1
+        key={index}
+        className="text-4xl font-extrabold leading-[1.15]"
+        style={{ color: NAVY, animation: "heroFade 0.5s ease" }}
+      >
+        {HERO_HEADLINES[index]}
+      </h1>
+      <style>{`@keyframes heroFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <div className="flex items-center gap-3 mt-4">
+        <button onClick={() => go(-1)} aria-label="Previous headline" className="w-7 h-7 rounded-full flex items-center justify-center border" style={{ borderColor: LINE }}>
+          <ChevronRight size={14} color={TEAL} style={{ transform: "rotate(180deg)" }} />
+        </button>
+        <div className="flex gap-1.5">
+          {HERO_HEADLINES.map((_, i) => (
+            <span key={i} className="rounded-full" style={{ width: i === index ? 16 : 6, height: 6, background: i === index ? TEAL : LINE, transition: "width 0.2s" }} />
+          ))}
+        </div>
+        <button onClick={() => go(1)} aria-label="Next headline" className="w-7 h-7 rounded-full flex items-center justify-center border" style={{ borderColor: LINE }}>
+          <ChevronRight size={14} color={TEAL} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Home_({ setView }) {
   return (
     <div className="pb-28">
@@ -179,9 +231,7 @@ function Home_({ setView }) {
       <section className="px-5 pt-14 pb-14" style={{ background: BG_SOFT }}>
         <div className="max-w-2xl mx-auto">
           <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: TEAL }}>Speech Therapist &amp; Audiologist in Lucknow</div>
-          <h1 className="text-4xl font-extrabold leading-[1.15] mb-5 max-w-md" style={{ color: NAVY }}>
-            Every voice deserves to be understood.
-          </h1>
+          <HeroHeadlineCarousel />
           <p className="text-[15px] leading-relaxed mb-8 max-w-md" style={{ color: TEXT_GRAY }}>
             Sonam is an RCI registered speech therapist and audiologist treating speech delay,
             stammering, language delay, and hearing loss in children and adults — in-clinic in
@@ -243,11 +293,29 @@ function Home_({ setView }) {
           <p className="text-[15px] leading-relaxed mb-8 max-w-xl" style={{ color: TEXT_GRAY }}>
             We manage a wide range of hearing, speech, language, and swallowing disorders.
           </p>
-          <div className="space-y-6">
-            <ConditionItem title="Hearing Loss & Hearing Aid Fitting" text="A condition affecting anyone from babies to adults — diagnosed with a hearing test and managed with hearing aids or referral for cochlear implants." />
-            <ConditionItem title="Speech Delay & Late Talkers" text="For children not talking on time — personalised therapy to build age-appropriate speech and language skills." />
-            <ConditionItem title="Stammering Treatment (Fluency Disorder)" text="Early diagnosis and structured therapy to build fluent, confident speech in children and adults." />
-            <ConditionItem title="Language Delay in Toddlers" text="For children struggling to understand or use language appropriate to their age — including support for children on the autism spectrum." />
+          <div className="space-y-3">
+            <ServiceDropdown title="Hearing Loss & Hearing Aid Fitting" text="A condition affecting anyone from babies to adults — diagnosed with a hearing test and managed with hearing aids or referral for cochlear implants." />
+            <ServiceDropdown title="Speech Delay & Late Talkers" text="For children not talking on time — personalised therapy to build age-appropriate speech and language skills." />
+            <ServiceDropdown title="Stammering Treatment (Fluency Disorder)" text="Early diagnosis and structured therapy to build fluent, confident speech in children and adults." />
+            <ServiceDropdown title="Language Delay in Toddlers" text="For children struggling to understand or use language appropriate to their age — including support for children on the autism spectrum." />
+          </div>
+        </div>
+      </section>
+
+      {/* Mid-page CTA banner — extra conversion point on long pages */}
+      <section className="px-5 py-10" style={{ background: NAVY }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="text-lg font-bold mb-4 text-white">Have a concern? Don't wait it out.</div>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <button onClick={() => setView("book")} className="px-6 py-3 rounded-full font-semibold text-sm" style={{ background: TEAL, color: "white" }}>
+              Book an Appointment
+            </button>
+            <a href="tel:+917521949604" className="px-6 py-3 rounded-full font-semibold text-sm border border-white text-white flex items-center gap-2">
+              <PhoneIncoming size={14} /> Call Now
+            </a>
+            <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2" style={{ background: WHATSAPP, color: "white" }}>
+              <MessageCircle size={14} /> WhatsApp Now
+            </a>
           </div>
         </div>
       </section>
@@ -263,13 +331,16 @@ function Home_({ setView }) {
               </div>
               <div className="flex-1 pt-1">
                 <div className="font-bold text-xl" style={{ color: NAVY }}>Sonam</div>
-                <div className="text-sm mt-0.5" style={{ color: TEXT_GRAY }}>Clinical Director</div>
+                <div className="text-sm mt-0.5" style={{ color: TEXT_GRAY }}>Experienced Speech &amp; Hearing Therapist</div>
                 <div className="text-sm font-semibold mt-1.5" style={{ color: TEAL_DARK }}>RCI Registered SLP</div>
               </div>
             </div>
             <div className="h-px my-6" style={{ background: LINE }} />
             <div className="flex items-center gap-2 text-sm mb-2.5" style={{ color: TEXT_GRAY }}>
               <MapPin size={15} color={TEAL} /> Lucknow, Uttar Pradesh
+            </div>
+            <div className="flex items-center gap-2 text-sm mb-2.5" style={{ color: TEXT_GRAY }}>
+              <Clock size={15} color={TEAL} /> Open 9:00 AM – 7:00 PM &middot; Online sessions scheduled around your timing
             </div>
             <div className="flex items-center gap-2 text-sm" style={{ color: TEXT_GRAY }}>
               <PhoneIncoming size={15} color={RED} /> +91 7521 949 604
@@ -289,9 +360,41 @@ function Home_({ setView }) {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="px-5 py-14" style={{ background: BG_SOFT2 }}>
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-[26px] font-extrabold mb-6 tracking-tight" style={{ color: NAVY }}>Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            <FAQItem q="Do you treat adults, or only children?" a="Both. We work with children on speech delay, language delay, and articulation, as well as adults on stammering, voice issues, and hearing loss." />
+            <FAQItem q="How many sessions will be needed?" a="This depends entirely on the individual case. After the first assessment, Sonam gives a clear, honest estimate — not a generic number — and adjusts the plan as real progress is tracked." />
+            <FAQItem q="Do I need to book an appointment in advance?" a="Yes, please book ahead (via the Book button, call, or WhatsApp) so a slot can be reserved — walk-ins may need to wait if the clinic is full." />
+            <FAQItem q="What is the consultation fee?" a="Fee details are shared directly when you call or WhatsApp us — just tap the call or WhatsApp button and we'll answer any cost questions right away." />
+            <FAQItem q="Do you offer online / video sessions?" a="Yes. Teletherapy is available for patients anywhere in India, and timing is scheduled flexibly around your own routine." />
+            <FAQItem q="Which hearing tests are available?" a="Please call or WhatsApp to check current audiology testing availability — this depends on the type of test needed." />
+          </div>
+        </div>
+      </section>
+
       <footer className="py-10 text-center text-xs px-5" style={{ color: "#9CA8A7" }}>
         Sona Speech &amp; Hearing Spot · Lucknow, Uttar Pradesh · +91 7521 949 604
       </footer>
+    </div>
+  );
+}
+
+function FAQItem({ q, a }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border overflow-hidden" style={{ borderColor: LINE, background: BG_WHITE }}>
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left">
+        <span className="text-sm font-semibold" style={{ color: NAVY }}>{q}</span>
+        <ChevronDown size={18} color={TEAL} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 text-sm leading-relaxed" style={{ color: TEXT_GRAY }}>
+          {a}
+        </div>
+      )}
     </div>
   );
 }
@@ -307,13 +410,27 @@ function TrackItem({ text }) {
   );
 }
 
-function ConditionItem({ title, text }) {
+function ServiceDropdown({ title, text, link }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="flex gap-3.5">
-      <div className="mt-2 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: TEAL }} />
-      <p className="text-[15px] leading-relaxed" style={{ color: TEXT_GRAY }}>
-        <span className="font-semibold" style={{ color: NAVY }}>{title}: </span>{text}
-      </p>
+    <div className="rounded-xl border overflow-hidden" style={{ borderColor: LINE, background: BG_WHITE }}>
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left">
+        <span className="flex items-center gap-3">
+          <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: TEAL }} />
+          <span className="text-[15px] font-semibold" style={{ color: NAVY }}>{title}</span>
+        </span>
+        <ChevronDown size={18} color={TEAL} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s", flexShrink: 0 }} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 pl-[34px]">
+          <p className="text-[14px] leading-relaxed mb-2" style={{ color: TEXT_GRAY }}>{text}</p>
+          {link && (
+            <a href={link} className="text-sm font-semibold" style={{ color: TEAL }}>
+              Learn more &rarr;
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -362,6 +479,24 @@ function BookingForm({ setView }) {
             {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Copied" : "Copy"}
           </button>
         </div>
+
+        {/* UPI payment — only shown here, after a booking is actually made */}
+        <div className="rounded-xl p-5 mb-6 border text-left" style={{ background: BG_SOFT, borderColor: LINE }}>
+          <div className="text-sm font-bold mb-1.5" style={{ color: NAVY }}>Want to pay in advance?</div>
+          <p className="text-xs leading-relaxed mb-4" style={{ color: TEXT_GRAY }}>
+            Optional — once your fee is confirmed over call or WhatsApp, you can pay via UPI here anytime.
+          </p>
+          <div className="text-[11px] font-semibold uppercase tracking-wide mb-1" style={{ color: TEAL }}>UPI ID</div>
+          <div className="text-sm font-bold mb-4" style={{ color: NAVY }}>{UPI_ID}</div>
+          <a
+            href={UPI_LINK}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm text-white"
+            style={{ background: TEAL }}
+          >
+            Pay via UPI App
+          </a>
+        </div>
+
         <button onClick={() => setView("status")} className="px-5 py-2.5 rounded-full font-semibold text-white" style={{ background: TEAL }}>
           Check appointment status
         </button>
@@ -598,6 +733,44 @@ function Admin() {
 /* ---------------------------------------------------------
    ROOT
 ---------------------------------------------------------- */
+/* ---------------------------------------------------------
+   Floating action buttons — WhatsApp always reachable, and a
+   scroll-to-top button that appears once you've scrolled down.
+   Positioned to clear the fixed bottom nav bar.
+---------------------------------------------------------- */
+function FloatingButtons() {
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 500);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className="fixed right-4 z-40 flex flex-col gap-3 items-end" style={{ bottom: 96 }}>
+      {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll to top"
+          className="w-11 h-11 rounded-full flex items-center justify-center shadow-lg border"
+          style={{ background: BG_WHITE, borderColor: LINE }}
+        >
+          <ChevronRight size={18} color={NAVY} style={{ transform: "rotate(-90deg)" }} />
+        </button>
+      )}
+      <a
+        href={WHATSAPP_LINK} target="_blank" rel="noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+        style={{ background: WHATSAPP }}
+      >
+        <MessageCircle size={24} color="white" />
+      </a>
+    </div>
+  );
+}
+
 export default function App() {
   const [view, setView] = useState("home");
 
@@ -606,6 +779,7 @@ export default function App() {
     // Visiting sonaspeechhearingspot.in/#sona-staff opens it.
     const checkHash = () => {
       if (window.location.hash === "#sona-staff") setView("admin");
+      if (window.location.hash === "#book") setView("book");
     };
     checkHash();
     window.addEventListener("hashchange", checkHash);
@@ -619,6 +793,7 @@ export default function App() {
       {view === "book" && <BookingForm setView={setView} />}
       {view === "status" && <StatusLookup />}
       {view === "admin" && <Admin />}
+      <FloatingButtons />
       <BottomNav view={view} setView={setView} />
     </div>
   );
