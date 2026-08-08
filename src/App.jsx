@@ -326,8 +326,8 @@ function Home_({ setView }) {
           <h2 className="text-[26px] font-extrabold mb-6 tracking-tight" style={{ color: NAVY }}>Our Clinician</h2>
           <div className="rounded-2xl border p-7" style={{ borderColor: LINE, background: BG_WHITE, boxShadow: "0 4px 16px rgba(14,74,84,0.06)" }}>
             <div className="flex gap-5">
-              <div className="w-24 h-24 rounded-2xl flex items-center justify-center shrink-0" style={{ background: NAVY }}>
-                <Logo size={56} />
+              <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 border" style={{ borderColor: LINE }}>
+                <img src="/sonam-avatar.jpg" alt="Sonam, Speech & Hearing Therapist" className="w-full h-full object-cover block" />
               </div>
               <div className="flex-1 pt-1">
                 <div className="font-bold text-xl" style={{ color: NAVY }}>Sonam</div>
