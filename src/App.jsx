@@ -21,6 +21,7 @@ const LINE = "#DCE7E6";
 const RED = "#C1443A";
 const WHATSAPP = "#25D366";
 const GOLD_STAR = "#F5A623";
+const CORAL_ACCENT = "#F2946B";
 const WHATSAPP_LINK = "https://wa.me/919236007124?text=Hi%2C%20I%27d%20like%20to%20book%20an%20appointment%20at%20Sona%20Speech%20%26%20Hearing%20Spot";
 const UPI_ID = "7521949604@ptaxis";
 const UPI_NAME = "Sonam Maurya";
@@ -266,6 +267,50 @@ const QUICK_SERVICES = [
   { label: "Language Delay Support", icon: CheckCircle2 },
 ];
 
+/* ---------------------------------------------------------
+   Subtle decorative waveform in the hero background — adds
+   visual richness without needing photography or illustration.
+---------------------------------------------------------- */
+function HeroBackdrop() {
+  const bars = Array.from({ length: 26 }, (_, i) => {
+    const wave = Math.sin(i * 0.5) * 0.5 + 0.5;
+    return 16 + wave * 44;
+  });
+  const barColors = [TEAL, CORAL_ACCENT, TEAL_DARK];
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      {/* Soft color blobs for depth */}
+      <div className="absolute -left-14 -top-14 w-52 h-52 rounded-full" style={{ background: TEAL, opacity: 0.10 }} />
+      <div className="absolute -right-10 top-8 w-32 h-32 rounded-full" style={{ background: CORAL_ACCENT, opacity: 0.08 }} />
+
+      {/* Animated, colorful equalizer strip along the bottom edge —
+          lively, on-brand (sound/voice), and safely clear of the text
+          above thanks to the section's extra bottom padding. */}
+      <div className="absolute left-0 right-0 bottom-0 flex items-end justify-center gap-[3px]" style={{ height: 56, paddingBottom: 8 }}>
+        {bars.map((h, i) => (
+          <div
+            key={i}
+            style={{
+              width: 5,
+              height: h,
+              background: barColors[i % barColors.length],
+              borderRadius: 3,
+              opacity: 0.5,
+              animation: `eqPulse 1.4s ease-in-out ${(i % 7) * 0.09}s infinite`,
+            }}
+          />
+        ))}
+      </div>
+      <style>{`
+        @keyframes eqPulse {
+          0%, 100% { transform: scaleY(0.55); }
+          50% { transform: scaleY(1); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 function HeroHeadlineCarousel() {
   const [index, setIndex] = useState(0);
 
@@ -309,8 +354,9 @@ function Home_({ setView }) {
   return (
     <div className="pb-28">
       {/* Hero */}
-      <section className="px-5 pt-14 pb-14" style={{ background: BG_SOFT }}>
-        <div className="max-w-2xl mx-auto">
+      <section className="px-5 pt-14 pb-24 relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${BG_SOFT} 0%, #E4F1F1 55%, ${BG_SOFT2} 100%)` }}>
+        <HeroBackdrop />
+        <div className="max-w-2xl mx-auto relative z-10">
           <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: TEAL }}>Speech Therapist &amp; Audiologist in Lucknow</div>
           <HeroHeadlineCarousel />
           <p className="text-[15px] leading-relaxed mb-8 max-w-md" style={{ color: TEXT_GRAY }}>
@@ -974,8 +1020,28 @@ export default function App() {
     return () => window.removeEventListener("hashchange", checkHash);
   }, []);
 
+  useEffect(() => {
+    // Gently fade + rise each section into view as the visitor scrolls,
+    // instead of everything appearing at once. Marks every <section> as
+    // a reveal target automatically — no need to tag them individually.
+    document.querySelectorAll("section").forEach(el => el.classList.add("reveal"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll("section.reveal").forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, [view]);
+
   return (
-    <div className="min-h-screen" style={{ background: BG_WHITE, fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="min-h-screen" style={{ background: BG_WHITE }}>
       <TopBars />
       {view === "home" && <Home_ setView={setView} />}
       {view === "book" && <BookingForm setView={setView} />}
