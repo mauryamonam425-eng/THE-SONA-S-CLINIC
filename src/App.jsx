@@ -26,6 +26,42 @@ const UPI_ID = "7521949604@ptaxis";
 const UPI_NAME = "Sonam Maurya";
 const UPI_LINK = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&cu=INR`;
 
+// EmailJS sends an email to Sonam/admin whenever a new booking comes in.
+// Fill these in after signing up at emailjs.com (see GO_LIVE_GUIDE section
+// for step-by-step setup). Until filled in, this quietly does nothing —
+// bookings still save normally either way.
+const EMAILJS_SERVICE_ID = "";   // e.g. "service_abc1234"
+const EMAILJS_TEMPLATE_ID = "";  // e.g. "template_xyz5678"
+const EMAILJS_PUBLIC_KEY = "";   // e.g. "AbCdEfGhIjKlMnOp"
+const ADMIN_ALERT_EMAIL = "";    // e.g. "sonaspeechhearingspot@gmail.com"
+
+async function sendAdminAlertEmail(record) {
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY || !ADMIN_ALERT_EMAIL) return;
+  try {
+    await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: EMAILJS_SERVICE_ID,
+        template_id: EMAILJS_TEMPLATE_ID,
+        user_id: EMAILJS_PUBLIC_KEY,
+        template_params: {
+          to_email: ADMIN_ALERT_EMAIL,
+          patient_name: record.name,
+          patient_phone: record.phone,
+          service: record.service,
+          mode: record.mode,
+          date: record.date,
+          time: record.time,
+          notes: record.notes || "(none)",
+        },
+      }),
+    });
+  } catch (e) {
+    // Never block a booking just because the email alert failed to send.
+  }
+}
+
 const SUPABASE_URL = "https://mmqvqudjmquuobryobxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_a0av8ALjS2ZctdGfdWsxcQ_Psk8fMny";
 
@@ -93,6 +129,25 @@ function todayISO() { return new Date().toISOString().slice(0, 10); }
 function fmtDate(iso) {
   if (!iso) return "";
   return new Date(iso + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+}
+
+// Builds a WhatsApp link to the patient with a message matching the
+// booking's current status — one tap for Sonam to notify them, no
+// paid messaging service needed.
+function notifyPatientLink(rec) {
+  const svc = SERVICES.find(s => s.key === rec.service)?.label || rec.service;
+  const when = `${fmtDate(rec.date)} at ${rec.time}`;
+  let msg;
+  if (rec.status === "confirmed") {
+    msg = `Hi ${rec.name}, this is Sona Speech & Hearing Spot. Your ${svc} appointment on ${when} is confirmed${rec.mode === "teletherapy" && rec.meetingLink ? `. Join here when it's time: ${rec.meetingLink}` : "."}`;
+  } else if (rec.status === "completed") {
+    msg = `Hi ${rec.name}, thank you for visiting Sona Speech & Hearing Spot today. Let us know if you have any questions before your next session.`;
+  } else if (rec.status === "cancelled") {
+    msg = `Hi ${rec.name}, your appointment on ${when} has been cancelled. Please reach out to reschedule whenever convenient.`;
+  } else {
+    msg = `Hi ${rec.name}, this is Sona Speech & Hearing Spot regarding your appointment request for ${when}.`;
+  }
+  return `https://wa.me/${rec.phone.length === 10 ? "91" + rec.phone : rec.phone}?text=${encodeURIComponent(msg)}`;
 }
 
 /* ---------------------------------------------------------
@@ -554,9 +609,11 @@ function BookingForm({ setView }) {
     if (digits.length !== 10) { setError("Please enter a valid 10-digit phone number."); return; }
     setSaving(true);
     const id = uid();
+    const newRecord = { id, name: form.name, phone: digits, service: form.service, mode: form.mode, date: form.date, time: form.time, notes: form.notes, status: "pending", meeting_link: "" };
     try {
-      await db.insertBooking({ id, name: form.name, phone: digits, service: form.service, mode: form.mode, date: form.date, time: form.time, notes: form.notes, status: "pending", meeting_link: "" });
+      await db.insertBooking(newRecord);
       setRefId(id);
+      sendAdminAlertEmail(newRecord); // fire-and-forget, never blocks the booking
     } catch (e) {
       setError("Could not save your booking. Please try again.");
     } finally { setSaving(false); }
@@ -836,6 +893,9 @@ function AdminDashboard({ passcode }) {
                   <button onClick={() => updateStatus(rec, "confirmed")} className="text-[11px] px-2.5 py-1 rounded-full font-semibold" style={{ background: BG_SOFT, color: TEAL_DARK }}>Confirm</button>
                   <button onClick={() => updateStatus(rec, "completed")} className="text-[11px] px-2.5 py-1 rounded-full font-semibold" style={{ background: "#E7E9F5", color: "#3B4B9B" }}>Complete</button>
                   <button onClick={() => updateStatus(rec, "cancelled")} className="text-[11px] px-2.5 py-1 rounded-full font-semibold" style={{ background: "#FBE9E7", color: RED }}>Cancel</button>
+                  <a href={notifyPatientLink(rec)} target="_blank" rel="noreferrer" className="text-[11px] px-2.5 py-1 rounded-full font-semibold flex items-center gap-1" style={{ background: WHATSAPP, color: "white" }}>
+                    <MessageCircle size={11} /> Notify Patient
+                  </a>
                 </div>
               </div>
               {rec.mode === "teletherapy" && (
