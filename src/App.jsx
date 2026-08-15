@@ -384,12 +384,16 @@ function Home_({ setView }) {
       <section className="px-5 py-14">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-[26px] font-extrabold mb-5 tracking-tight" style={{ color: NAVY }}>About the Clinic</h2>
-          <p className="text-[15px] leading-[1.8] max-w-xl" style={{ color: TEXT_GRAY }}>
+          <p className="text-[15px] leading-[1.8] max-w-xl mb-5" style={{ color: TEXT_GRAY }}>
             Sona Speech &amp; Hearing Spot is a trusted <strong>speech therapy and audiology clinic
             in Lucknow</strong>, led by an RCI registered speech therapist. We work with children
             who are late talkers or have speech delay, adults and children who stammer, and
-            patients of all ages needing a hearing test or hearing aid — with every case tracked
-            against clear, measurable progress.
+            patients of all ages needing a hearing test or hearing aid.
+          </p>
+          <p className="text-[15px] leading-[1.8] max-w-xl" style={{ color: TEXT_GRAY }}>
+            No case is treated with a generic plan. Every patient is assessed individually,
+            given a clear starting point, and followed with measurable progress at every stage —
+            so families always know exactly where things stand, not just what was done in a session.
           </p>
         </div>
       </section>
@@ -407,12 +411,51 @@ function Home_({ setView }) {
         </div>
       </section>
 
+      {/* Testimonials — real Google reviews. Placed right after the trust
+          claims above, so proof follows the promise immediately. */}
+      <section className="px-5 py-14" style={{ background: BG_SOFT }}>
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-[26px] font-extrabold tracking-tight" style={{ color: NAVY }}>What Parents Say</h2>
+          </div>
+          <div className="flex items-center gap-1.5 mb-8">
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map(i => (
+                <svg key={i} width="15" height="15" viewBox="0 0 20 20" fill={GOLD_STAR}>
+                  <path d="M10 1l2.6 5.9L19 7.6l-4.6 4.4 1.2 6.5L10 15.6l-5.6 2.9 1.2-6.5L1 7.6l6.4-.7z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-sm font-semibold ml-1" style={{ color: TEXT_GRAY }}>Real reviews from Google</span>
+          </div>
+          <div className="space-y-4">
+            <TestimonialCard
+              name="Arushi"
+              text="I am extremely grateful to Sonam Mam for her dedication and support in helping my son overcome his speech delay. When we started therapy about a year ago, my son was not speaking at all. With regular therapy, patience, and guidance from Sonam Mam, he has shown tremendous improvement and started communicating and speaking. Sonam Mam is very caring, patient, and professional, and her efforts have made a big difference in our son's development."
+            />
+            <TestimonialCard
+              name="Artika Agarwal"
+              text="I am taking therapy of my child from Sonam ma'am from the past 1 year and there is a very positive improvement in my child. He is 6 years old, and after starting therapy he is gradually improving and has also started saying some words."
+            />
+            <TestimonialCard
+              name="Harpreet Kapoor"
+              text="Our experience with Sona Mam, speech therapist, has been going very well. Her behaviour is extremely patient, supportive, and affectionate toward the child. She plans every session according to the child's needs, and we've seen clear progress in a short time. She also guides parents properly. I recommend her with full confidence for any child needing speech or language support."
+            />
+            <TestimonialCard
+              name="Shashank Kashyap"
+              text="Best speech therapist in the area, so happy with the results and my child's progress."
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Conditions Treated style */}
       <section className="px-5 py-14" style={{ background: BG_SOFT2 }}>
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-[26px] font-extrabold mb-3 tracking-tight" style={{ color: NAVY }}>Conditions Treated</h2>
+          <div className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: TEAL }}>Our Services</div>
+          <h2 className="text-[26px] font-extrabold mb-3 tracking-tight" style={{ color: NAVY }}>What We Treat</h2>
           <p className="text-[15px] leading-relaxed mb-8 max-w-xl" style={{ color: TEXT_GRAY }}>
-            We manage a wide range of hearing, speech, language, and swallowing disorders.
+            Speech therapy and audiology care for a wide range of hearing, speech, language, and swallowing needs — tap any condition below for details.
           </p>
           <div className="space-y-3">
             <ServiceDropdown title="Hearing Loss & Hearing Aid Fitting" text="A condition affecting anyone from babies to adults — diagnosed with a hearing test and managed with hearing aids or referral for cochlear implants." />
@@ -481,43 +524,6 @@ function Home_({ setView }) {
         </div>
       </section>
 
-      {/* Testimonials — real Google reviews */}
-      <section className="px-5 py-14" style={{ background: BG_SOFT }}>
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-[26px] font-extrabold tracking-tight" style={{ color: NAVY }}>What Parents Say</h2>
-          </div>
-          <div className="flex items-center gap-1.5 mb-8">
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map(i => (
-                <svg key={i} width="15" height="15" viewBox="0 0 20 20" fill={GOLD_STAR}>
-                  <path d="M10 1l2.6 5.9L19 7.6l-4.6 4.4 1.2 6.5L10 15.6l-5.6 2.9 1.2-6.5L1 7.6l6.4-.7z" />
-                </svg>
-              ))}
-            </div>
-            <span className="text-sm font-semibold ml-1" style={{ color: TEXT_GRAY }}>Real reviews from Google</span>
-          </div>
-          <div className="space-y-4">
-            <TestimonialCard
-              name="Arushi"
-              text="I am extremely grateful to Sonam Mam for her dedication and support in helping my son overcome his speech delay. When we started therapy about a year ago, my son was not speaking at all. With regular therapy, patience, and guidance from Sonam Mam, he has shown tremendous improvement and started communicating and speaking. Sonam Mam is very caring, patient, and professional, and her efforts have made a big difference in our son's development."
-            />
-            <TestimonialCard
-              name="Artika Agarwal"
-              text="I am taking therapy of my child from Sonam ma'am from the past 1 year and there is a very positive improvement in my child. He is 6 years old, and after starting therapy he is gradually improving and has also started saying some words."
-            />
-            <TestimonialCard
-              name="Harpreet Kapoor"
-              text="Our experience with Sona Mam, speech therapist, has been going very well. Her behaviour is extremely patient, supportive, and affectionate toward the child. She plans every session according to the child's needs, and we've seen clear progress in a short time. She also guides parents properly. I recommend her with full confidence for any child needing speech or language support."
-            />
-            <TestimonialCard
-              name="Shashank Kashyap"
-              text="Best speech therapist in the area, so happy with the results and my child's progress."
-            />
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="px-5 py-14" style={{ background: BG_SOFT2 }}>
         <div className="max-w-2xl mx-auto">
@@ -533,7 +539,34 @@ function Home_({ setView }) {
         </div>
       </section>
 
-      <footer className="py-10 text-center text-xs px-5" style={{ color: "#9CA8A7" }}>
+      {/* Final contact section — a real closing moment, not just a caption */}
+      <section className="px-5 py-14" style={{ background: NAVY }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: CORAL_ACCENT }}>Get in Touch</div>
+          <h2 className="text-2xl font-extrabold mb-6 text-white" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+            Ready when you are.
+          </h2>
+          <div className="text-sm mb-2" style={{ color: "#CBD9D6" }}>
+            H.N. D-2/456, Sec. 1, LDA Colony, Kanpur Road, Lucknow – 226012
+          </div>
+          <div className="text-sm mb-8" style={{ color: "#CBD9D6" }}>
+            Open 9:00 AM – 7:00 PM &middot; Online sessions scheduled around your timing
+          </div>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <button onClick={() => setView("book")} className="px-6 py-3 rounded-full font-semibold text-sm" style={{ background: TEAL, color: "white" }}>
+              Book an Appointment
+            </button>
+            <a href="tel:+919236007124" className="px-6 py-3 rounded-full font-semibold text-sm border border-white text-white flex items-center gap-2">
+              <PhoneIncoming size={14} /> Call Now
+            </a>
+            <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="px-6 py-3 rounded-full font-semibold text-sm flex items-center gap-2" style={{ background: WHATSAPP, color: "white" }}>
+              <MessageCircle size={14} /> WhatsApp Now
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="py-6 text-center text-xs px-5" style={{ color: "#9CA8A7" }}>
         Sona Speech &amp; Hearing Spot · Lucknow, Uttar Pradesh · +91 9236 007 124
       </footer>
     </div>
